@@ -13,4 +13,4 @@ test:
 	
 run:
 	# run the python file
-	uvicorn main:app --port 8001 --reload
+	uvicorn videoapp.main:app --port 8001 --reload

@@ -1,21 +1,39 @@
 from fastapi import FastAPI
-from fastapi import Request
+from fastapi import Request, Depends
 from fastapi.responses import HTMLResponse
-import database
+from sqlalchemy.orm import Session
+from videoapp.users import models
+from videoapp.database import engine, get_db
+
+models.Base.metadata.create_all(bind=engine)    
+
 
 app = FastAPI()
-DB_SESSION = None
+
 
 @app.on_event("startup")
 def on_startup():
     print('Hello World')
-    global DB_SESSION
-    DB_SESSION = database.get_db()
-
+    
 
 @app.get('/')
 def home():
      return {'name': 'Videoapp'}
 
+@app.get("/users")
+def users_list_view(session: Session = Depends(get_db)):
+        q = session.query(models.User).limit(10)
 
-print(on_startup()) 
+        return list(q)
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,12 @@
+from urllib.parse import quote_plus
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import config
+from videoapp.config import settings
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{config.settings.db_username}:{config.settings.db_password}@{config.settings.db_hostname}/{config.settings.db_name}'
+DB_PASSWORD_UPDATED = quote_plus(settings.db_password)
+
+SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.db_username}:{DB_PASSWORD_UPDATED}@{settings.db_hostname}/{settings.db_name}'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -18,7 +21,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 
 
@@ -39,5 +41,6 @@ while True:
     except Exception as err:
         print("Connecting to database failed")
         print("Error: ", err)
-'''        
+'''   
+     
 
