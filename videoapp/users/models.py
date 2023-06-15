@@ -1,9 +1,9 @@
 import uuid
 from fastapi import Depends
 from sqlalchemy import Column, String, UUID
-from sqlalchemy.orm import Session
-from videoapp.database import Base, get_db
+from videoapp.database import Base, SessionLocal
 from videoapp.users import validators, security
+
 
 
 class User(Base):
@@ -32,7 +32,9 @@ class User(Base):
         return verified   
 
     @staticmethod
-    def create_user(email: String, password: String = None, session: Session = Depends(get_db)):
+    def create_user(email: String, password: String = None):
+        session = SessionLocal()
+        yield session
         q = session.query(User).filter(User.email==email)
         print(q)
         if q.count() != 0:
@@ -46,6 +48,7 @@ class User(Base):
         session.add(obj)
         session.commit()
         session.refresh(obj)
+        session.close()
         return obj
 
 #user1 = User.create_user(email='abc@gmail.com', password='abc123')

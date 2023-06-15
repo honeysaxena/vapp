@@ -21,8 +21,8 @@ def home():
      return {'name': 'Videoapp'}
 
 @app.get("/users")
-def users_list_view(session: Session = Depends(get_db)):
-        q = session.query(models.User).limit(10)
+def users_list_view(db: Session = Depends(get_db)):
+        q = db.query(models.User).limit(10)
 
         return list(q)
 

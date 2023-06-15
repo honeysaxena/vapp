@@ -9,7 +9,7 @@ lint:
 	pylint --disable=R,C *.py
 test:
 	# pytest
-	#pytest application/tests/test*.py
+	pytest videoapp/tests/test*.py
 	
 run:
 	# run the python file
