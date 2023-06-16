@@ -46,7 +46,7 @@ def login_post_view(request: Request, email: str = Form(...), password: str = Fo
          "password": password,
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, schemas.UserLoginSchema)       
-
+    print(data['password'].get_secret_value())
     return templates.TemplateResponse("auth/login.html", {
         "request": request,
         "data": data,

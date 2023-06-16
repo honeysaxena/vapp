@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     db_password: str
     db_name: str 
     db_username: str 
+    secret_key: str
+    jwt_algorithm: str = Field(default='HS256')
+    session_duration: int = Field(default=86400)
     template_dir: Path = Path(__file__).resolve().parent / 'templates'
 
     class Config:
