@@ -14,7 +14,8 @@ class Settings(BaseSettings):
     secret_key: str
     jwt_algorithm: str = Field(default='HS256')
     session_duration: int = Field(default=86400)
-    template_dir: Path = Path(__file__).resolve().parent / 'templates'
+    base_dir: Path = Path(__file__).resolve().parent
+    templates_dir: Path = Path(__file__).resolve().parent / 'templates'
 
     class Config:
         env_file = 'videoapp/.env'
