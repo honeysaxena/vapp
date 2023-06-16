@@ -52,7 +52,7 @@ def login_post_view(request: Request, email: str = Form(...), password: str = Fo
     if len(errors) > 0:
         return render(request, "auth/login.html", context, status_code=400)       
     #print(data['password'].get_secret_value())
-    return render(request, "auth/login.html", context)
+    return render(request, "auth/login.html", {"logged_in": True}, cookies=data)
 
 
 @app.get('/signup', response_class=HTMLResponse)

@@ -2,19 +2,21 @@ import datetime
 from jose import jwt, ExpiredSignatureError
 from videoapp.users.models import User
 from fastapi import Depends
-from sqlalchemy.orm import Session
-from videoapp.database import get_db
+from videoapp.database import SessionLocal
 from videoapp.config import settings
 
 
-def authenticate(email, password, db: Session = Depends(get_db)):
+def authenticate(email, password):
     try:
-        user_obj = db.query(User).filter_by(email=email)
+        session = SessionLocal()
+        user_obj = session.query(User).filter_by(email=email)
     except Exception as e:
-        user_obj = None    
-    if not user_obj.verify_password(password):
-        return None
-    return user_obj
+        user_obj = None 
+    for q in user_obj:       
+        if not q.verify_password(password):
+            return None
+        return q
+    session.close()
 
 def login(user_obj, expires_after=86400):
     raw_data = {

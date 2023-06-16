@@ -6,7 +6,9 @@
 
 {% include 'snippets/form_errors.html' %}
 
-
+{% if logged_in %}
+    <p>You are already logged in. Would you like to log out?</p>
+{% else %}
 <form method="POST">
     <div>
         <label for="email">Email</label>
@@ -19,5 +21,6 @@
     </div>
     <button type="submit">Login</button>
 </form>
+{% endif %}
 
 {% endblock %} 
