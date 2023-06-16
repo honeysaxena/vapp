@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic.error_wrappers import ValidationError
 from sqlalchemy.orm import Session
+from videoapp import utils
 from videoapp.users import models, schemas
 from videoapp.database import engine, get_db
 
@@ -40,9 +41,16 @@ def login_get_view(request: Request):
 
 @app.post('/login', response_class=HTMLResponse)
 def login_post_view(request: Request, email: str = Form(...), password: str = Form(...)):
-    print(email, password)
-    return templates.TemplateResponse("auth/signup.html", {
+    raw_data = {
+         "email": email,
+         "password": password,
+    }
+    data, errors = utils.valid_schema_data_or_error(raw_data, schemas.UserLoginSchema)       
+
+    return templates.TemplateResponse("auth/login.html", {
         "request": request,
+        "data": data,
+        "errors": errors
     })
 
 @app.get('/signup', response_class=HTMLResponse)
@@ -54,18 +62,12 @@ def signup_get_view(request: Request):
 
 @app.post('/signup', response_class=HTMLResponse)
 def signup_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
-    data = {}
-    errors = []
-    error_str = ""
-    try:
-        cleaned_data = schemas.UserSignupSchema(email=email, password=password, password_confirm=password_confirm)
-        data = cleaned_data.dict()
-    except ValidationError as e:
-         error_str = e.json()
-    try:
-         errors = json.loads(error_str)
-    except Exception as e:
-         errors = [{"loc": "non_field_error", "msg": "Unknown error"}]          
+    raw_data = {
+         "email": email,
+         "password": password,
+         "password_confirm": password_confirm
+    }
+    data, errors = utils.valid_schema_data_or_error(raw_data, schemas.UserSignupSchema)       
     return templates.TemplateResponse("auth/signup.html", {
         "request": request,
         "data": data,

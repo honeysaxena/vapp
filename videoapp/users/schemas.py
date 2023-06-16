@@ -2,6 +2,12 @@ from pydantic import BaseModel, EmailStr, SecretStr, validator
 from videoapp.users.models import User
 from videoapp.database import SessionLocal
 
+
+class UserLoginSchema(BaseModel):
+    email: EmailStr
+    password: SecretStr 
+
+
 class UserSignupSchema(BaseModel):
     email: EmailStr
     password: SecretStr
