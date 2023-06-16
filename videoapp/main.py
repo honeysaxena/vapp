@@ -1,10 +1,12 @@
 import pathlib
+import json
 from fastapi import FastAPI
 from fastapi import  Depends, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from pydantic.error_wrappers import ValidationError
 from sqlalchemy.orm import Session
-from videoapp.users import models
+from videoapp.users import models, schemas
 from videoapp.database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)  
@@ -52,9 +54,22 @@ def signup_get_view(request: Request):
 
 @app.post('/signup', response_class=HTMLResponse)
 def signup_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
-    
-    return templates.TemplateResponse("auth/login.html", {
+    data = {}
+    errors = []
+    error_str = ""
+    try:
+        cleaned_data = schemas.UserSignupSchema(email=email, password=password, password_confirm=password_confirm)
+        data = cleaned_data.dict()
+    except ValidationError as e:
+         error_str = e.json()
+    try:
+         errors = json.loads(error_str)
+    except Exception as e:
+         errors = [{"loc": "non_field_error", "msg": "Unknown error"}]          
+    return templates.TemplateResponse("auth/signup.html", {
         "request": request,
+        "data": data,
+        "errors": errors,
     })
 
 @app.get("/users")
