@@ -10,7 +10,8 @@ def redirect(path, cookies: dict={}, remove_session=False):
     for k, v in cookies.items():
         response.set_cookie(key=k, value=v, httponly=True)
     if remove_session:
-        response.set_cookie(key='session_id', value='', httponly=True)    
+        response.set_cookie(key='session_ended', value=1, httponly=True)    
+        response.delete_cookie('session_id')
     return response    
 
 

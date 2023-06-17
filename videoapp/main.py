@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi import  Depends, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.authentication import requires
 from pydantic.error_wrappers import ValidationError
 from sqlalchemy.orm import Session
 from videoapp import utils
@@ -11,6 +13,7 @@ from videoapp.users import models, schemas
 from videoapp.shortcuts import render, redirect
 from videoapp.database import engine, get_db
 from videoapp.users.decorators import login_required
+from videoapp.users.backends import JWTCookieBackend
 
 models.Base.metadata.create_all(bind=engine)  
 
@@ -18,6 +21,7 @@ BASE_DIR = pathlib.Path(__file__).resolve().parent
 TEMPLATE_DIR  = BASE_DIR / "templates"
 
 app = FastAPI()
+app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 from videoapp.handlers import * # noqa
@@ -30,11 +34,13 @@ def on_startup():
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
-    context = {
-        "abc": 123       
-    }
-    return render(request, "home.html", context)
+    if request.user.is_authenticated:
+        return render(request, "dashboard.html", {}, status_code=200 )
+    print(request.user)
+    print(request.user.is_authenticated)
+    return render(request, "home.html", {})
 
+# account page
 @app.get('/account', response_class=HTMLResponse)
 @login_required
 def account_view(request: Request):
