@@ -1,15 +1,16 @@
 import pathlib
 import json
 from fastapi import FastAPI
-from fastapi import  Depends, Request, Form
+from fastapi import  Depends, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic.error_wrappers import ValidationError
 from sqlalchemy.orm import Session
 from videoapp import utils
 from videoapp.users import models, schemas
-from videoapp.shortcuts import render
+from videoapp.shortcuts import render, redirect
 from videoapp.database import engine, get_db
+from videoapp.users.decorators import login_required
 
 models.Base.metadata.create_all(bind=engine)  
 
@@ -18,6 +19,8 @@ TEMPLATE_DIR  = BASE_DIR / "templates"
 
 app = FastAPI()
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
+
+from videoapp.handlers import * # noqa
 
 
 @app.on_event("startup")
@@ -32,10 +35,20 @@ def home(request: Request):
     }
     return render(request, "home.html", context)
 
+@app.get('/account', response_class=HTMLResponse)
+@login_required
+def account_view(request: Request):
+    """
+    hello world!
+    """
+    context = {}
+    return render(request, "account.html", context)
+
+
 @app.get('/login', response_class=HTMLResponse)
 def login_get_view(request: Request):
-   
-    return render(request, "auth/login.html", {})
+    session_id  = request.cookies.get("session_id") or None
+    return render(request, "auth/login.html", {"logged_in": session_id is not None})
 
 
 @app.post('/login', response_class=HTMLResponse)
@@ -52,7 +65,7 @@ def login_post_view(request: Request, email: str = Form(...), password: str = Fo
     if len(errors) > 0:
         return render(request, "auth/login.html", context, status_code=400)       
     #print(data['password'].get_secret_value())
-    return render(request, "auth/login.html", {"logged_in": True}, cookies=data)
+    return redirect("/", cookies=data)
 
 
 @app.get('/signup', response_class=HTMLResponse)
@@ -75,7 +88,7 @@ def signup_post_view(request: Request, email: str = Form(...), password: str = F
     }
     if len(errors) > 0:
         return render(request, "auth/signup.html", context, status_code=400)  
-    return render(request, "auth/signup.html", context)
+    return redirect("/login")
 
 @app.get("/users")
 def users_list_view(db: Session = Depends(get_db)):

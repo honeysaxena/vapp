@@ -1,9 +1,17 @@
 from videoapp.config import settings
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates 
 
 
 templates = Jinja2Templates(directory=str(settings.templates_dir))
+
+def redirect(path, cookies: dict={}, remove_session=False):
+    response = RedirectResponse(path, status_code=302)
+    for k, v in cookies.items():
+        response.set_cookie(key=k, value=v, httponly=True)
+    if remove_session:
+        response.set_cookie(key='session_id', value='', httponly=True)    
+    return response    
 
 
 def render(request, template_name, context={}, status_code: int = 200, cookies:dict={}):

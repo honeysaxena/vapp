@@ -1,7 +1,6 @@
 import datetime
 from jose import jwt, ExpiredSignatureError
 from videoapp.users.models import User
-from fastapi import Depends
 from videoapp.database import SessionLocal
 from videoapp.config import settings
 
