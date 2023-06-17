@@ -15,16 +15,17 @@ from videoapp.database import engine, get_db
 from videoapp.users.decorators import login_required
 from videoapp.users.backends import JWTCookieBackend
 from videoapp.videos.models import Video
+from videoapp.videos.routers import router as video_router
 
 
 models.Base.metadata.create_all(bind=engine)  
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent
-TEMPLATE_DIR  = BASE_DIR / "templates"
 
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
-templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
+app.include_router(video_router)
+
 
 from videoapp.handlers import * # noqa
 
