@@ -14,6 +14,8 @@ from videoapp.shortcuts import render, redirect
 from videoapp.database import engine, get_db
 from videoapp.users.decorators import login_required
 from videoapp.users.backends import JWTCookieBackend
+from videoapp.videos.models import Video
+
 
 models.Base.metadata.create_all(bind=engine)  
 

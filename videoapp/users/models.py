@@ -51,6 +51,27 @@ class User(Base):
         session.close()
         return obj
 
+
+    @staticmethod
+    def check_exists(user_id):
+        session = SessionLocal()
+        q = session.query(User).filter_by(user_id=user_id)
+        session.close()
+        return q.count() != 0
+
+
+    @staticmethod
+    def by_user_id(user_id=None):
+        session = SessionLocal()
+        if user_id is None:
+            return None
+        q = session.query(User).filter_by(user_id=user_id)
+        if q.count() != 1:
+            return None
+        return q.first()
+
+
+
 #user1 = User.create_user(email='abc@gmail.com', password='abc123')
 #print(user1)
 
