@@ -2,7 +2,7 @@ import uuid
 from fastapi import Depends
 from sqlalchemy import Column, String, UUID
 from videoapp.database import Base, SessionLocal
-from videoapp.users import validators, security
+from videoapp.users import validators, security, exceptions
 
 
 
@@ -38,10 +38,10 @@ class User(Base):
         q = session.query(User).filter(User.email==email)
         print(q)
         if q.count() != 0:
-            raise Exception("user already has account with this email")
+            raise exceptions.UserHasAccountException("user already has account with this email")
         valid, msg, email = validators._validate_email(email)
         if not valid:
-            raise Exception(f'Invalid email: {msg}')
+            raise exceptions.InvalidEmailException(f'Invalid email: {msg}')
         obj = User(email=email)
         obj.set_password(password)
         #obj.password = password

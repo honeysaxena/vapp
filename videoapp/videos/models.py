@@ -1,9 +1,10 @@
 import uuid
 from fastapi import Depends
 from sqlalchemy import Column, String, UUID
+from videoapp.users.exceptions import InvalidUserIDException
 from videoapp.database import Base, SessionLocal
 from videoapp.users.models import User
-
+from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlreadyAddedException
 from videoapp.videos.extractors import extract_video_id
 
 class Video(Base):
@@ -18,7 +19,7 @@ class Video(Base):
         return self.__repr__()
 
     def __repr__(self):
-        return f"Video(email={self.email}, user_id={self.user_id})"
+        return f"Video(host_id={self.host_id}, host_service={self.host_service})"
     
 
     @staticmethod
@@ -26,15 +27,22 @@ class Video(Base):
         session = SessionLocal()
         host_id = extract_video_id(url)
         if host_id is None:
-            raise Exception("Invalid Youtube Video URL")
-        user_id = User.check_exists(user_id)
-        if user_id is None:
-            raise Exception("Invalid user_id")
+            raise InvalidYoutubeVideoURLException("Invalid Youtube Video URL")
+        user_exists = User.check_exists(user_id)
+        if user_exists is False:
+            raise InvalidUserIDException("Invalid user_id")
         q = session.query(Video).filter_by(host_id=host_id, user_id=user_id)
         if q.count() != 0:
-            raise Exception("Video already added!")
+            raise VideoAlreadyAddedException("Video already added!")
+        
+        obj = Video(host_id=host_id, user_id=user_id, url=url)
+        session.add(obj)
+        session.commit()
+        session.refresh(obj)
         session.close()
-        return Video(host_id=host_id, user_id=user_id, url=url)
+        return obj
+    
+    
        
 
     
