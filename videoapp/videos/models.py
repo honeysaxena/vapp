@@ -38,7 +38,7 @@ class Video(Base):
         user_exists = User.check_exists(user_id)
         if user_exists is False:
             raise InvalidUserIDException("Invalid user_id")
-        q = session.query(Video).filter_by(host_id=host_id, user_id=user_id)
+        q = session.query(Video).filter_by(host_id=host_id)
         if q.count() != 0:
             raise VideoAlreadyAddedException("Video already added!")
         

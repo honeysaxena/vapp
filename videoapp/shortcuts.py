@@ -1,9 +1,21 @@
 from videoapp.config import settings
+from videoapp.database import SessionLocal
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates 
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 templates = Jinja2Templates(directory=str(settings.templates_dir))
+
+def get_object_or_404(KlassName, **kwargs):
+    session = SessionLocal()
+    q = None
+    try:
+        q = session.query(KlassName).filter_by(**kwargs)
+    except:
+        raise StarletteHTTPException(status_code=404)
+    session.close()    
+    return q    
 
 def redirect(path, cookies: dict={}, remove_session=False):
     response = RedirectResponse(path, status_code=302)
