@@ -52,8 +52,9 @@ def video_detail_view(request: Request, host_id: str):
     q = get_object_or_404(Video, host_id=host_id)
     context = {
         "host_id": host_id,
-        "object": [obj for obj in q] or None
+        "object": [obj for obj in q] or None   
     }
+    print(context)
     return render(request, "videos/detail.html", context)
 
 

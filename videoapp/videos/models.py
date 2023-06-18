@@ -6,6 +6,7 @@ from videoapp.database import Base, SessionLocal
 from videoapp.users.models import User
 from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlreadyAddedException
 from videoapp.videos.extractors import extract_video_id
+from videoapp.shortcuts import templates
 
 class Video(Base):
     __tablename__ = "videos"
@@ -22,6 +23,13 @@ class Video(Base):
     def __repr__(self):
         return f"Video(title={self.title}, host_id={self.host_id}, host_service={self.host_service})"
     
+    def render(self):
+        basename = self.host_service
+        template_name = f"videos/renderers/{basename}.html"
+        context = {"host_id": self.host_id}
+        t = templates.get_template(template_name)
+        return t.render(context)
+
     def as_data(self):
         return {f"{self.host_service}_id": self.host_id, "path": self.path}
     
