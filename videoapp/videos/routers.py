@@ -4,6 +4,8 @@ from videoapp.shortcuts import render, redirect
 from videoapp.users.decorators import login_required
 from videoapp import utils
 from videoapp.videos.schemas import VideoCreateSchema
+from videoapp.videos.models import Video
+from videoapp.database import SessionLocal
 
 router = APIRouter(
     prefix='/videos'
@@ -16,11 +18,13 @@ def video_create_view(request: Request):
 
 @router.post("/create", response_class=HTMLResponse)
 @login_required
-def video_create_post_view(request: Request, url: str = Form(...)):
+def video_create_post_view(request: Request, title: str = Form(...), url: str = Form(...)):
     raw_data = {
+        "title": title,
         "url": url,
         "user_id": request.user.username
     }
+
     data, errors = utils.valid_schema_data_or_error(raw_data, VideoCreateSchema)
     context = {
         "data": data,
@@ -34,7 +38,13 @@ def video_create_post_view(request: Request, url: str = Form(...)):
 
 @router.get("/", response_class=HTMLResponse)
 def video_list_view(request: Request):
-    return render(request, "videos/list.html", {})
+    session = SessionLocal()
+    q = session.query(Video).limit(100)
+    context = {
+        "object_list": q
+    }
+    session.close()
+    return render(request, "videos/list.html", context)
 
 
 @router.get("/detail", response_class=HTMLResponse)
