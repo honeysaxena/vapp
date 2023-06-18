@@ -1,3 +1,4 @@
+#import uuid
 from pydantic import (
     BaseModel,
     validator,
@@ -25,6 +26,8 @@ class VideoCreateSchema(BaseModel):
     @root_validator
     def validate_data(cls, values):
         url = values.get('url')
+        if url is None:
+            raise ValueError("A valid URL is required.")
         user_id = values.get('user_id')
         video_obj = None
         try:

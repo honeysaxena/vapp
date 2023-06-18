@@ -17,7 +17,7 @@ def authenticate(email, password):
         return q
     session.close()
 
-def login(user_obj, expires_after=86400):
+def login(user_obj, expires_after=settings.session_duration):
     raw_data = {
     "user_id": f"{user_obj.user_id}",
     "role": "admin",    
