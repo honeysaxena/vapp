@@ -93,11 +93,20 @@
     function storeWatchEvent() {
         var data = {
             currentTime: currentTime,
-            viseoId: videoId
+            videoId: videoId
 
         }
         timeSinceLastSaved = 0;
         console.log('saving...', data)
+        
+        var reqOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+        fetch("/watch-event", reqOptions)
     }
 
 </script>

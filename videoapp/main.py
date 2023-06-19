@@ -106,6 +106,13 @@ def users_list_view(db: Session = Depends(get_db)):
         return list(q)
 
 
+@app.post("/watch-event")
+def watch_event_view(request: Request, data:dict):
+    print('data', data)
+    print(request.user.is_authenticated)
+    return {"working": True}
+
+
 
 
 
