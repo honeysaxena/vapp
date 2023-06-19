@@ -17,6 +17,7 @@ from videoapp.users.backends import JWTCookieBackend
 from videoapp.videos.models import Video
 from videoapp.videos.routers import router as video_router
 from videoapp.watch_events.models import WatchEvent
+from videoapp.watch_events.schemas import WatchEventSchema
 
 
 models.Base.metadata.create_all(bind=engine)  
@@ -107,24 +108,26 @@ def users_list_view(db: Session = Depends(get_db)):
         return list(q)
 
 
-@app.post("/watch-event")
-def watch_event_view(request: Request, data:dict):
+@app.post("/watch-event", response_model=WatchEventSchema)
+def watch_event_view(request: Request, watch_event:WatchEventSchema):
+    cleaned_data = watch_event.dict()
+    data = cleaned_data.copy()
+    data.update({
+        "user_id": request.user.username
+    })
     print('data', data)
     if (request.user.is_authenticated):
         session = SessionLocal()
-        eventobj1 = WatchEvent(host_id=data.get("videoId"),
-                   user_id=request.user.username,
-                   start_time=0,
-                   end_time=data.get('currentTime'),
-                   duration=500,
-                   complete=False
-                   )
+        eventobj1 = WatchEvent(**data)
         session.add(eventobj1)
         session.commit()
         session.refresh(eventobj1)
         session.close()
+        return watch_event
 
-    return {"working": True}
+    return watch_event
+
+
 
 
 
