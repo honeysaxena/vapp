@@ -11,11 +11,12 @@ from sqlalchemy.orm import Session
 from videoapp import utils
 from videoapp.users import models, schemas
 from videoapp.shortcuts import render, redirect
-from videoapp.database import engine, get_db
+from videoapp.database import engine, get_db, SessionLocal
 from videoapp.users.decorators import login_required
 from videoapp.users.backends import JWTCookieBackend
 from videoapp.videos.models import Video
 from videoapp.videos.routers import router as video_router
+from videoapp.watch_events.models import WatchEvent
 
 
 models.Base.metadata.create_all(bind=engine)  
@@ -109,7 +110,20 @@ def users_list_view(db: Session = Depends(get_db)):
 @app.post("/watch-event")
 def watch_event_view(request: Request, data:dict):
     print('data', data)
-    print(request.user.is_authenticated)
+    if (request.user.is_authenticated):
+        session = SessionLocal()
+        eventobj1 = WatchEvent(host_id=data.get("videoId"),
+                   user_id=request.user.username,
+                   start_time=0,
+                   end_time=data.get('currentTime'),
+                   duration=500,
+                   complete=False
+                   )
+        session.add(eventobj1)
+        session.commit()
+        session.refresh(eventobj1)
+        session.close()
+
     return {"working": True}
 
 
