@@ -3,12 +3,11 @@
 
 {% block content %}
 
-{{ host_id }}
-{{ object }} 
+{% if object.title %}<h1>{{ object.title }}</h1>{% endif %}
+<p>{{ start_time }}</p>
 
 
-
-<div id="yt-video" data-video-id="{{ host_id }}" data-start-time="0"></div>
+<div id="yt-video" data-video-id="{{ host_id }}" data-start-time="{{ start_time }}"></div>
 
 <div><code>{{ object.render() }}</code></div>
 
@@ -35,7 +34,7 @@
                 videoId: videoId,
                 playerVars: {
                     'modestbranding': 0,
-                    'autoplay': 1,
+                    'autoplay': 0,
                     'start': 0,
                     'playsinline': 1,
                     'controls': 1,

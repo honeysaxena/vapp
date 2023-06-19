@@ -6,6 +6,7 @@ from videoapp import utils
 from videoapp.videos.schemas import VideoCreateSchema
 from videoapp.videos.models import Video
 from videoapp.database import SessionLocal
+from videoapp.watch_events.models import WatchEvent
 
 router = APIRouter(
     prefix='/videos'
@@ -50,10 +51,16 @@ def video_list_view(request: Request):
 @router.get("/{host_id}", response_class=HTMLResponse)
 def video_detail_view(request: Request, host_id: str):
     q = get_object_or_404(Video, host_id=host_id)
+    start_time = 0
+    if request.user.is_authenticated:
+        user_id = request.user.username
+        start_time = WatchEvent.get_resume_time(host_id, user_id)
+    
     for obj in q:
 
         context = {
             "host_id": host_id,
+            "start_time": start_time,
             "object": obj or None   
         }
     print(context)
