@@ -17,7 +17,7 @@ from videoapp.users.backends import JWTCookieBackend
 from videoapp.videos.models import Video
 from videoapp.videos.routers import router as video_router
 from videoapp.watch_events.models import WatchEvent
-from videoapp.watch_events.schemas import WatchEventSchema
+from videoapp.watch_events.routers import router as watch_event_router
 
 
 models.Base.metadata.create_all(bind=engine)  
@@ -27,7 +27,7 @@ BASE_DIR = pathlib.Path(__file__).resolve().parent
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
 app.include_router(video_router)
-
+app.include_router(watch_event_router)
 
 from videoapp.handlers import * # noqa
 
@@ -108,24 +108,7 @@ def users_list_view(db: Session = Depends(get_db)):
         return list(q)
 
 
-@app.post("/watch-event", response_model=WatchEventSchema)
-def watch_event_view(request: Request, watch_event:WatchEventSchema):
-    cleaned_data = watch_event.dict()
-    data = cleaned_data.copy()
-    data.update({
-        "user_id": request.user.username
-    })
-    print('data', data)
-    if (request.user.is_authenticated):
-        session = SessionLocal()
-        eventobj1 = WatchEvent(**data)
-        session.add(eventobj1)
-        session.commit()
-        session.refresh(eventobj1)
-        session.close()
-        return watch_event
 
-    return watch_event
 
 
 
