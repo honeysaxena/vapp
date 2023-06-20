@@ -29,3 +29,4 @@ class WatchEvent(Base):
             if not obj.complete or not obj.completed:
                 resume_time = obj.end_time
         return resume_time        
+    

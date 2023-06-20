@@ -8,6 +8,7 @@ from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlr
 from videoapp.videos.extractors import extract_video_id
 from videoapp.shortcuts import templates
 
+
 class Video(Base):
     __tablename__ = "videos"
     host_id = Column(String, primary_key=True)
@@ -15,7 +16,7 @@ class Video(Base):
     host_service = Column(String, default='youtube')
     title = Column(Text)
     url = Column(String)
-    user_id = Column(UUID)
+    user_id = Column(UUID)  
 
     def __str__(self):
         return self.__repr__()

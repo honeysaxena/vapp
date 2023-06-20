@@ -9,6 +9,7 @@ from starlette.authentication import requires
 from pydantic.error_wrappers import ValidationError
 from sqlalchemy.orm import Session
 from videoapp import utils
+from videoapp.playlists.routers import router as playlist_router
 from videoapp.users import models, schemas
 from videoapp.shortcuts import render, redirect
 from videoapp.database import engine, get_db, SessionLocal
@@ -26,6 +27,7 @@ BASE_DIR = pathlib.Path(__file__).resolve().parent
 
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
+app.include_router(playlist_router)
 app.include_router(video_router)
 app.include_router(watch_event_router)
 
