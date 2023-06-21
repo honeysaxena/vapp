@@ -12,16 +12,16 @@ from videoapp import utils
 from videoapp.playlists.routers import router as playlist_router
 from videoapp.users import models, schemas
 from videoapp.shortcuts import render, redirect
-from videoapp.database import engine, get_db, SessionLocal
+from videoapp.database import get_db, SessionLocal, create_db_and_tables
 from videoapp.users.decorators import login_required
 from videoapp.users.backends import JWTCookieBackend
-from videoapp.videos.models import Video
+#from videoapp.videos.models import Video
 from videoapp.videos.routers import router as video_router
-from videoapp.watch_events.models import WatchEvent
+#from videoapp.watch_events.models import WatchEvent
 from videoapp.watch_events.routers import router as watch_event_router
 
 
-models.Base.metadata.create_all(bind=engine)  
+ 
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 
@@ -37,6 +37,7 @@ from videoapp.handlers import * # noqa
 @app.on_event("startup")
 def on_startup():
     print('Hello World, Welcome to Video App')
+    create_db_and_tables()
     
 
 @app.get('/', response_class=HTMLResponse)
