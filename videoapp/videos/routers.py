@@ -1,6 +1,8 @@
+import uuid
+from typing import Optional
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
-from videoapp.shortcuts import render, redirect, get_object_or_404
+from videoapp.shortcuts import render, redirect, get_object_or_404, is_htmx
 from videoapp.users.decorators import login_required
 from videoapp import utils
 from videoapp.videos.schemas import VideoCreateSchema
@@ -12,13 +14,11 @@ router = APIRouter(
     prefix='/videos'
 )
 
-def is_htmx(request: Request):
-    return request.headers.get("hx-request") == 'true'
 
 @router.get("/create", response_class=HTMLResponse)
 @login_required
-def video_create_view(request: Request, is_htmx=Depends(is_htmx)):
-    
+def video_create_view(request: Request, is_htmx=Depends(is_htmx), playlist_id: Optional[uuid.UUID] = None):
+    print(playlist_id)
     if is_htmx:
         return render(request, "videos/htmx/create.html", {})
     return render(request, "videos/create.html", {})

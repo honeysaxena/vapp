@@ -5,13 +5,19 @@
 
 {% if object.title %}<h1>{{ object.title }}</h1>{% endif %}
 
-<div id="video-create-form">
+<div id="video-container">
 
+    {% for video in object.get_videos() %}
+        {% with path=video.path, title=video.title %}
+            {% include 'videos/htmx/link.html' %}
+        {% endwith %}    
+    {% endfor %}
 </div>
 
-<button hx-get="/videos/create"
+
+<button hx-get="/playlists/{{ object.db_id }}/add-video"
     hx-trigger="click"
-    hx-target="#video-create-form"
+    hx-target="#video-container"
     hx-swap="beforeend">
     Add Video Form   
 </button>
