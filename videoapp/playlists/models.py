@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from sqlalchemy import Column, DateTime, UUID, Text, PickleType, Integer, UUID
+from sqlalchemy import Column, DateTime, UUID, Text, PickleType, String, UUID
 from sqlalchemy.ext.mutable import MutableList
 from videoapp.database import Base, SessionLocal, engine
 from videoapp.videos.models import Video
@@ -10,8 +10,8 @@ Base.metadata.create_all(bind=engine)
 
 class Playlists(Base):
     __tablename__ = "playlists"
-    db_id = Column(UUID, primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID)
+    db_id = Column(UUID, primary_key=True, default=uuid.uuid1)
+    user_id = Column(String)
     updated = Column(DateTime, default=datetime.utcnow())
     host_ids = Column(MutableList.as_mutable(PickleType), default=[])
     title = Column(Text)

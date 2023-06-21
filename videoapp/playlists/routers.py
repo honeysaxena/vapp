@@ -20,6 +20,7 @@ def playlist_create_view(request: Request):
 @router.post("/create", response_class=HTMLResponse)
 @login_required
 def playlist_create_post_view(request: Request, title: str = Form(...)):
+    session = SessionLocal()
     raw_data = {
         "title": title,
         "user_id": request.user.username
@@ -33,6 +34,10 @@ def playlist_create_post_view(request: Request, title: str = Form(...)):
     if len(errors) > 0:
         return render(request, "playlists/create.html", context, status_code=400)
     obj = Playlists(**data)
+    session.add(obj)
+    session.commit()
+    session.refresh(obj)
+    session.close()
     redirect_path = obj.path or "/playlists/create"
     return redirect(redirect_path)
 

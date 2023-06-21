@@ -19,7 +19,7 @@ from videoapp.users.backends import JWTCookieBackend
 from videoapp.videos.routers import router as video_router
 #from videoapp.watch_events.models import WatchEvent
 from videoapp.watch_events.routers import router as watch_event_router
-
+from videoapp.playlists.models import Playlists
 
  
 
