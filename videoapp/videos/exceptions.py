@@ -8,3 +8,9 @@ class VideoAlreadyAddedException(Exception):
    '''
    Video already added!
    '''  
+
+
+class VideoObjectNotFound(Exception):
+   '''
+   Object not found
+   '''

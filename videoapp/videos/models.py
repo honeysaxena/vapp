@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, UUID, Text
 from videoapp.users.exceptions import InvalidUserIDException
 from videoapp.database import Base, SessionLocal
 from videoapp.users.models import User
-from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlreadyAddedException
+from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlreadyAddedException, VideoObjectNotFound
 from videoapp.videos.extractors import extract_video_id
 from videoapp.shortcuts import templates
 
@@ -32,11 +32,29 @@ class Video(Base):
         return t.render(context)
 
     def as_data(self):
-        return {f"{self.host_service}_id": self.host_id, "path": self.path}
+        return {f"{self.host_service}_id": self.host_id, "path": self.path, "title": self.title}
     
     @property
     def path(self):
         return f"/videos/{self.host_id}"
+    
+    @staticmethod
+    def get_or_create(url, user_id=None, **kwargs):
+        session = SessionLocal()
+        host_id = extract_video_id(url)
+        obj = None
+        created = False
+        try:
+            obj = session.query(Video).filter_by(host_id=host_id).all()
+            if not obj:
+                obj = Video.add_video(url, user_id=user_id, **kwargs)
+                created = True
+        #except VideoObjectNotFound:
+        #    obj = Video.add_video(url, user_id=user_id, **kwargs) 
+        #    created = True   
+        except:
+            raise Exception("Invalid request")          
+        return obj, created  
 
     @staticmethod
     def add_video(url, user_id=None, **kwargs):
