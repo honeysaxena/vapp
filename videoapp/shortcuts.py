@@ -1,5 +1,5 @@
 from videoapp.config import settings
-from videoapp.database import SessionLocal
+from videoapp.database import session
 from fastapi import Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates 
@@ -11,15 +11,21 @@ templates = Jinja2Templates(directory=str(settings.templates_dir))
 def is_htmx(request: Request):
     return request.headers.get("hx-request") == 'true'
 
-def get_object_or_404(KlassName, **kwargs):
-    session = SessionLocal()
+def get_object_or_404(KlassName,  **kwargs):
+    #session = SessionLocal()
     q = None
     try:
-        q = session.query(KlassName).filter_by(**kwargs)
+        query = session.query(KlassName).filter_by(**kwargs)
+
+        #q = session.get(KlassName, **kwargs)
     except:
         raise StarletteHTTPException(status_code=404)
-    session.close()    
-    return q    
+    #session.close()
+    for q in query:
+        return q
+        
+    #session.close()    
+    #return q    
 
 def redirect(path, cookies: dict={}, remove_session=False):
     response = RedirectResponse(path, status_code=302)

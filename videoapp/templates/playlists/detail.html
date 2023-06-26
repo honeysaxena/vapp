@@ -5,12 +5,38 @@
 
 {% if object.title %}<h1>{{ object.title }}</h1>{% endif %}
 
-<div id="video-container">
-
-    {% for video in object.get_videos() %}
+{% for video in object.get_videos() %}
+        { loop.index }
+ 
         {% with path=video.path, title=video.title %}
-            {% include 'videos/htmx/link.html' %}
-        {% endwith %}    
+                    <li id="video-item-{{ loop.index }}">
+                        {{ loop.index - 1 }}
+                        {% include 'videos/htmx/link.html' %}
+                        <button style="color: crimson;" 
+                        hx-post="/playlists/{{ object.db_id }}/{{ video.host_id }}/delete/"
+                        hx-target="#video-item-{{ loop.index }}"
+                        hx-vals="{'index': '{{ loop.index -1 }}'}">
+                        Remove</button>
+                    </li>
+                {% endwith %}
+                
+    {% endfor %}
+<div id="video-container">
+    {% for video in object.get_videos() %}
+        { loop.index }
+ 
+        {% with path=video.path, title=video.title %}
+                    <li id="video-item-{{ loop.index }}">
+                        {{ loop.index - 1 }}
+                        {% include 'videos/htmx/link.html' %}
+                        <button style="color: crimson;" 
+                        hx-post="/playlists/{{ object.db_id }}/{{ video.host_id }}/delete/"
+                        hx-target="#video-item-{{ loop.index }}"
+                        hx-vals="{'index': '{{ loop.index -1 }}'}">
+                        Remove</button>
+                    </li>
+                {% endwith %}
+                
     {% endfor %}
 </div>
 

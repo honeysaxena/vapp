@@ -45,16 +45,30 @@ class Video(Base):
         obj = None
         created = False
         try:
-            obj = session.query(Video).filter_by(host_id=host_id).all()
+            video_obj = session.query(Video).filter_by(host_id=host_id)
+            for obj in video_obj:
+                print("video obj found")
+            #obj = session.get(Video, {"host_id": host_id})
             if not obj:
                 obj = Video.add_video(url, user_id=user_id, **kwargs)
-                created = True
-        #except VideoObjectNotFound:
-        #    obj = Video.add_video(url, user_id=user_id, **kwargs) 
-        #    created = True   
+                created = True 
         except:
-            raise Exception("Invalid request")          
+            raise Exception("Invalid request")
+        session.close()          
         return obj, created  
+
+    def update_video_url(self, url, save=True):
+        session = SessionLocal()
+        host_id = extract_video_id(url)
+        if not host_id:
+            return None
+        self.url = url
+        
+        self.host_id = host_id
+        if save:
+            session.commit()
+        session.close()
+        return url
 
     @staticmethod
     def add_video(url, user_id=None, **kwargs):

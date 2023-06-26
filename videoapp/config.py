@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     session_duration: int = Field(default=86400)
     base_dir: Path = Path(__file__).resolve().parent
     templates_dir: Path = Path(__file__).resolve().parent / 'templates'
+    algolia_app_id: str
+    algolia_api_key: str
+    algolia_index_name: str
 
     class Config:
         env_file = 'videoapp/.env'

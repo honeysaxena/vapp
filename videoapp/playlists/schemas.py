@@ -64,6 +64,7 @@ class PlaylistVideoAddSchema(BaseModel):
         if not isinstance(video_obj, Video):
             raise ValueError("There is a problem with your account, please try again.")
         if playlist_id:
+            
             playlist_obj = session.query(Playlists).filter_by(db_id=playlist_id)
             for obj in playlist_obj:
                 obj.add_host_ids(host_ids=[video_obj.host_id])
@@ -72,7 +73,7 @@ class PlaylistVideoAddSchema(BaseModel):
             session.commit()
             session.refresh(obj)
 
-        session.close()   
+            session.close()   
         
         return video_obj.as_data()
     

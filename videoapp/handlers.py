@@ -1,7 +1,7 @@
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from videoapp.main import app
-from videoapp.shortcuts import render, redirect
+from videoapp.shortcuts import render, redirect, is_htmx
 from videoapp.users.exceptions import LoginRequiredException
 
 @app.exception_handler(StarletteHTTPException)
@@ -14,4 +14,8 @@ async def http_exception_handler(request, exc):
 
 @app.exception_handler(LoginRequiredException)
 async def login_required_exception_handler(request, exc):
-    return redirect(f"/login?next={request.url}", remove_session=True)
+    response = redirect(f"/login?next={request.url}", remove_session=True)
+    if is_htmx(request):
+        response.status_code = 200
+        response.headers['HX-Redirect'] = "/login"
+    return response
