@@ -2,7 +2,7 @@ import uuid
 from fastapi import Depends
 from sqlalchemy import Column, String, UUID, Text
 from videoapp.users.exceptions import InvalidUserIDException
-from videoapp.database import Base, SessionLocal
+from videoapp.database import Base, session
 from videoapp.users.models import User
 from videoapp.videos.exceptions import InvalidYoutubeVideoURLException, VideoAlreadyAddedException, VideoObjectNotFound
 from videoapp.videos.extractors import extract_video_id
@@ -40,7 +40,6 @@ class Video(Base):
     
     @staticmethod
     def get_or_create(url, user_id=None, **kwargs):
-        session = SessionLocal()
         host_id = extract_video_id(url)
         obj = None
         created = False
@@ -58,7 +57,6 @@ class Video(Base):
         return obj, created  
 
     def update_video_url(self, url, save=True):
-        session = SessionLocal()
         host_id = extract_video_id(url)
         if not host_id:
             return None
@@ -72,7 +70,6 @@ class Video(Base):
 
     @staticmethod
     def add_video(url, user_id=None, **kwargs):
-        session = SessionLocal()
         host_id = extract_video_id(url)
         if host_id is None:
             raise InvalidYoutubeVideoURLException("Invalid Youtube Video URL")
