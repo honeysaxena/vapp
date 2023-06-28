@@ -5,7 +5,10 @@ pipeline{
         stage('Git Checkout'){
             steps{
                 script{
-                    git branch: 'h1', url: 'https://github.com/honeysaxena/vapp.git'
+                    gitCheckout(
+                        branch: "main",
+                        url: "https://github.com/honeysaxena/vapp.git"
+                    )
                 }
             }
         }
