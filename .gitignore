@@ -1,0 +1,5 @@
+videoappvenv/
+.env
+__pycache__
+
+extras/
