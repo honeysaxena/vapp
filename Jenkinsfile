@@ -6,14 +6,24 @@ pipeline{
     stages{
         stage('Git Checkout'){
             steps{
-                script{
-                    gitCheckout(
-                        branch: "main",
-                        url: "https://github.com/honeysaxena/vapp.git"
-                    )
-                }
+                
+                gitCheckout(
+                    branch: "main",
+                    url: "https://github.com/honeysaxena/vapp.git"
+                )
             }
         }
+        stage('Pytest'){
+                
+            steps{
+                script{
+                    pyTest()
+                }
+            }
+        }            
+                
+            
+        
     }
 }
 
