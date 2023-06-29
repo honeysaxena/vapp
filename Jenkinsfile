@@ -58,6 +58,15 @@ pipeline{
                     dockerBuild("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
                 }
             }
+        }
+        stage('Docker Image Scan'){
+            
+
+            steps{
+                script{
+                    dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+                }
+            }
         }         
             
         
