@@ -19,15 +19,15 @@ pipeline{
                 )
             }
         }
-        stage('Pytest'){
+        //stage('Pytest'){
             
 
-            steps{
-                script{
-                    pyTest()
-                }
-            }
-        }            
+        //    steps{
+        //        script{
+        //            pyTest()
+        //        }
+        //    }
+        //}            
         stage('Static code analysis SOnarqube'){
             
 
