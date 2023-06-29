@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM python:latest
 RUN mkdir -p /app
 COPY . app/
 WORKDIR /app
