@@ -3,6 +3,10 @@
 pipeline{
     agent any
 
+    environment {     
+    DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')     
+    }
+
     parameters{
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
         string(name: 'ImageName', description: 'name of the docker build', defaultValue: 'pythonapp')
@@ -40,6 +44,12 @@ pipeline{
                 }
             }
         }
+        stage('Login to Docker Hub') {      	
+            steps{                       	
+	            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'                		
+	            echo 'Login Completed'      
+            }           
+        }
         stage('Docker Image Build'){
             
 
@@ -51,6 +61,11 @@ pipeline{
         }         
             
         
+    }
+    post{
+        always {  
+	    sh 'docker logout'     
+        }      
     }
 }
 
