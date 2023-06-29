@@ -28,7 +28,7 @@ pipeline{
                 }
             }
         }            
-        stage('Static code analysis SOnarqube'){
+        stage('Static code analysis pylint'){
             
 
             steps{
