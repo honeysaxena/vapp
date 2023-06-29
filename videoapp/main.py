@@ -1,3 +1,4 @@
+import uvicorn
 import pathlib
 #import json
 from typing import Optional
@@ -145,6 +146,9 @@ def search_detail_view(request: Request,  q:Optional[str] = None):
         }
     return render(request, "search/detail.html", context)
 
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=8001)
 
 
 
