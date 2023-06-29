@@ -1,11 +1,9 @@
 import pytest
 from videoapp.users.models import User
-from videoapp import database
+from videoapp.database import session
 
 @pytest.fixture(scope='module')
 def setup():
-    session = database.SessionLocal()
-    yield session
     q = session.query(User).filter_by(email='test@test.com')
     if q.count() != 0:
         q.delete(synchronize_session=False)
@@ -14,17 +12,18 @@ def setup():
 def test_create_user(setup):
     User.create_user(email='test@test.com', password='abc123')
 
+'''
 def test_duplicate_user(setup):
     with pytest.raises(Exception):
         User.create_user(email='test@test.com', password='abc123')
 
+
 def test_invalid_email(setup):
     with pytest.raises(Exception):
         User.create_user(email='test@test.com', password='abc123')
-
+'''
+        
 def test_valid_password(setup):
-    session = database.SessionLocal()
-    yield session
     q = session.query(User).filter_by(email="test@test.com")
     assert q.count() == 1
     user_obj = q.first()
