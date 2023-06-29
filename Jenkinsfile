@@ -3,7 +3,14 @@
 pipeline{
     agent any
 
+    parameters{
+        choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
+    }
+
     stages{
+
+        when { expression { param.action == 'create '} }
+
         stage('Git Checkout'){
             steps{
                 
@@ -14,14 +21,25 @@ pipeline{
             }
         }
         stage('Pytest'){
-                
+            
+            when { expression { param.action == 'create '} }
+
             steps{
                 script{
                     pyTest()
                 }
             }
         }            
-                
+        stage('Static code analysis SOnarqube'){
+            
+            when { expression { param.action == 'create '} }
+
+            steps{
+                script{
+                    staticCodeAnalysis()
+                }
+            }
+        }        
             
         
     }
