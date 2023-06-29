@@ -10,7 +10,7 @@ pipeline{
     stages{
 
         stage('Git Checkout'){
-            when { expression { params.action == 'create '} }
+            
             steps{
                 
                 gitCheckout(
@@ -21,7 +21,6 @@ pipeline{
         }
         stage('Pytest'){
             
-            when { expression { params.action == 'create '} }
 
             steps{
                 script{
@@ -31,7 +30,6 @@ pipeline{
         }            
         stage('Static code analysis SOnarqube'){
             
-            when { expression { params.action == 'create '} }
 
             steps{
                 script{
