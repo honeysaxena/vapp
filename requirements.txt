@@ -95,8 +95,7 @@ platformdirs==2.6.2
 pluggy==1.0.0
 prometheus-client==0.17.0
 prompt-toolkit==3.0.38
-psutil==5.9.5
-psycopg2==2.9.6
+psycopg2-binary
 pure-eval==0.2.2
 pyasn1==0.5.0
 pycparser==2.21
