@@ -59,15 +59,15 @@ pipeline{
                 }
             }
         }
-        stage('Docker Image Scan'){
-            
+        //stage('Docker Image Scan'){
+        //    
 
-            steps{
-                script{
-                    dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-                }
-            }
-        }         
+        //    steps{
+        //        script{
+        //            dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+        //        }
+        //    }
+        //}         
             
         
     }
